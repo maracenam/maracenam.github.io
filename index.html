@@ -154,6 +154,27 @@
   .section-head h2 { font-size: clamp(28px, 3.6vw, 38px); line-height: 1.15; font-weight: 700; letter-spacing: -.02em; margin-bottom: 12px; }
   .section-head p { color: var(--muted); font-size: 18px; }
 
+  /* Services catalog */
+  .services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .svc {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 14px;
+    padding: 26px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .svc.featured { border: 1.5px solid var(--accent); box-shadow: var(--shadow); }
+  .svc-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .svc-step { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .svc-badge { font: 600 12px/1 var(--sans); color: var(--accent-ink); background: var(--accent); padding: 6px 10px; border-radius: 999px; }
+  .svc h3 { font-size: 22px; line-height: 1.2; font-weight: 700; letter-spacing: -.01em; }
+  .svc .when-need { font-size: 16px; }
+  .svc .when-need b { font-weight: 600; }
+  .svc ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .svc li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; font-size: 15px; color: var(--muted); }
+  .svc li svg { width: 18px; height: 18px; margin-top: 3px; color: var(--accent); }
+  .svc-foot { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; font-size: 14px; color: var(--muted); }
+  .svc-foot a { font-weight: 600; text-decoration: none; }
+  .svc-foot a:hover { text-decoration: underline; }
+  .services-note { margin-top: 20px; font-size: 15px; color: var(--muted); max-width: 70ch; }
+
   /* Service */
   .service { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 48px; align-items: start; }
   .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: step; }
@@ -203,6 +224,18 @@
   .stack { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
   .stack li { font: 400 12.5px/1 var(--mono); color: var(--ink); background: var(--ground); border: 1px solid var(--rule); padding: 6px 8px; border-radius: 6px; }
 
+  .case.wide { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 18px 36px; align-items: start; }
+  .case.wide .col { display: flex; flex-direction: column; gap: 18px; }
+  .role { font-size: 15px; background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; }
+  .role b { font-weight: 600; }
+  .case-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .others { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .other { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 24px; display: grid; gap: 12px; align-content: start; }
+  .other h3 { font-size: 20px; line-height: 1.25; font-weight: 700; }
+  .other p { color: var(--muted); font-size: 15px; }
+  .other a { font-weight: 600; font-size: 15px; text-decoration: none; }
+  .other a:hover { text-decoration: underline; }
+
   /* FAQ */
   .faq { max-width: 760px; }
   .faq details { border-top: 1px solid var(--rule); padding-block: 18px; margin: 0; }
@@ -239,7 +272,7 @@
   @media (max-width: 900px) {
     .hero .container, .service, .contact-card { grid-template-columns: 1fr; }
     .hero { padding-block: 48px 48px; }
-    .cases { grid-template-columns: 1fr; }
+    .cases, .services, .others, .case.wide { grid-template-columns: 1fr; }
     .nav { display: none; }
     .topbar .btn { margin-left: auto; }
   }
@@ -248,7 +281,7 @@
     body { font-size: 16px; }
     .creds ul { grid-template-columns: 1fr; gap: 14px; }
     section.block { padding-block: 64px 0; }
-    .case, .deliver { padding: 22px; }
+    .case, .deliver, .svc { padding: 22px; }
     .report-rows li { grid-template-columns: minmax(0, 1fr) auto; }
     .report-rows .val { grid-column: 1; grid-row: 2; text-align: left; color: var(--muted); }
     .report-rows .chip { grid-row: 1 / span 2; grid-column: 2; }
@@ -268,7 +301,7 @@
       <span>Matías Aracena</span>
     </a>
     <nav class="nav" aria-label="Secciones">
-      <a href="#servicio">Servicio</a>
+      <a href="#servicios">Servicios</a>
       <a href="#casos">Casos</a>
       <a href="#preguntas">Preguntas</a>
     </nav>
@@ -282,10 +315,10 @@
       <div>
         <p class="eyebrow">Auditoría TI + datos, para empresas en Chile</p>
         <h1>Decida con números en los que puede confiar.</h1>
-        <p class="hero-sub">Reviso cómo su empresa maneja sus datos, encuentro dónde fallan y le entrego un plan claro para corregirlos. Con la mirada de un auditor TI y las herramientas de un ingeniero de datos.</p>
+        <p class="hero-sub">Ordeno los datos de su empresa, los convierto en reportes que se actualizan solos y, cuando están listos, en modelos que anticipan lo que viene. Con la mirada de un auditor TI y las herramientas de un ingeniero de datos.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="#contacto">Agendar 15 minutos</a>
-          <a class="btn btn-secondary" href="#servicio">Ver cómo funciona</a>
+          <a class="btn btn-secondary" href="#servicios">Ver servicios</a>
         </div>
         <p class="hero-note">Primera conversación sin costo ni compromiso.</p>
       </div>
@@ -318,11 +351,71 @@
     </ul>
   </div>
 
-  <section class="block" id="servicio">
+  <section class="block" id="servicios">
     <div class="container">
       <div class="section-head">
-        <h2>Diagnóstico de datos en 3 semanas</h2>
-        <p>Para empresas con información crítica repartida entre planillas y sistemas que no conversan entre sí.</p>
+        <h2>Servicios</h2>
+        <p>Cuatro servicios que se apoyan uno en otro: primero datos confiables, luego reportes y automatización, y al final predicción.</p>
+      </div>
+
+      <div class="services">
+        <article class="svc featured">
+          <div class="svc-top"><span class="svc-step">Paso 1 · Ordenar</span><span class="svc-badge">Recomendado para empezar</span></div>
+          <h3>Diagnóstico de datos</h3>
+          <p class="when-need"><b>Para cuando</b> sus reportes no cuadran entre áreas o no confía del todo en sus números.</p>
+          <ul>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Revisión de calidad, consistencia y accesos</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Informe con riesgos ordenados por impacto</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Plan de acción y una fuente ya limpia</span></li>
+          </ul>
+          <div class="svc-foot"><span>3 semanas · precio fijo</span><a href="#diagnostico">Cómo funciona →</a></div>
+        </article>
+
+        <article class="svc">
+          <div class="svc-top"><span class="svc-step">Paso 2 · Ver</span></div>
+          <h3>Dashboards y reportes</h3>
+          <p class="when-need"><b>Para cuando</b> arma los mismos reportes a mano cada semana o mes, y llegan tarde.</p>
+          <ul>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Indicadores clave definidos con usted</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Dashboard en Power BI o Looker Studio</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Datos que se actualizan sin copiar y pegar</span></li>
+          </ul>
+          <div class="svc-foot"><span>2 a 4 semanas</span><a href="#caso-indicadores">Ver caso relacionado →</a></div>
+        </article>
+
+        <article class="svc">
+          <div class="svc-top"><span class="svc-step">Paso 3 · Automatizar</span></div>
+          <h3>Automatización de datos</h3>
+          <p class="when-need"><b>Para cuando</b> su equipo pasa datos de un sistema a otro a mano, con errores y retrasos.</p>
+          <ul>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Conexión entre sus sistemas, planillas y la nube</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Cargas programadas, con validaciones</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Aviso automático si algo falla</span></li>
+          </ul>
+          <div class="svc-foot"><span>Según alcance</span><a href="#caso-indicadores">Ver caso relacionado →</a></div>
+        </article>
+
+        <article class="svc">
+          <div class="svc-top"><span class="svc-step">Paso 4 · Anticipar</span></div>
+          <h3>Modelos predictivos</h3>
+          <p class="when-need"><b>Para cuando</b> quiere anticipar mora, demanda, clientes que se van o pacientes que no llegan.</p>
+          <ul>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Modelo entrenado con su historial</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Métrica elegida según el costo real del error</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Validación con casos reales antes de usarlo</span></li>
+          </ul>
+          <div class="svc-foot"><span>Requiere datos ordenados</span><a href="#caso-hta">Ver caso relacionado →</a></div>
+        </article>
+      </div>
+      <p class="services-note">Puede empezar por el servicio que necesite. Si sus datos aún no están ordenados, se lo diré en la primera conversación, antes de cotizar.</p>
+    </div>
+  </section>
+
+  <section class="block" id="diagnostico">
+    <div class="container">
+      <div class="section-head">
+        <h2>Cómo funciona el diagnóstico</h2>
+        <p>Tres semanas, pensado para empresas con información crítica repartida entre planillas y sistemas que no conversan entre sí.</p>
       </div>
 
       <div class="service">
@@ -362,11 +455,36 @@
     <div class="container">
       <div class="section-head">
         <h2>Casos</h2>
-        <p>Dos proyectos propios que muestran el método: ordenar los datos, validarlos y ponerlos a trabajar.</p>
+        <p>Un proyecto con cliente y dos proyectos propios que muestran cómo trabajo: desde entender el problema hasta dejarlo funcionando.</p>
       </div>
 
       <div class="cases">
-        <article class="case">
+        <article class="case wide" id="caso-museo">
+          <div class="col">
+            <span class="case-tag">Aplicación web · Proyecto con cliente</span>
+            <h3>Catálogo 3D del Museo Regional de Magallanes</h3>
+            <p class="case-text">El museo necesitaba mostrar sus piezas en línea sin copiar a mano cada ficha. Construimos un catálogo donde cada pieza se ve en 3D junto a su ficha oficial, y un panel donde el equipo del museo publica sin saber programar.</p>
+            <p class="role"><b>Mi rol:</b> dirigí el proyecto y las reuniones con el museo, desarrollé la aplicación y participé en la documentación.</p>
+            <div class="case-actions"><a class="btn btn-primary btn-sm" href="https://museo-magallanes-3d.vercel.app/" target="_blank" rel="noopener">Ver el sitio en vivo</a><span style="font-size:14px;color:var(--muted)">Proyecto en equipo</span></div>
+          </div>
+          <div class="col">
+            <div class="metrics">
+              <div class="metric"><b>13</b><span>campos de la ficha oficial que se completan solos</span></div>
+              <div class="metric"><b>0</b><span>líneas de código que el museo necesita para publicar</span></div>
+            </div>
+            <p class="applies"><b>En su empresa:</b> catálogos, fichas de productos o registros que hoy se copian a mano desde otra fuente.</p>
+            <details>
+              <summary>Detalle técnico</summary>
+              <div class="details-body">
+                <p>El panel lee la ficha pública de SURDOC, marca los campos que faltan y el equipo del museo revisa todo antes de publicar. Las reglas de la base de datos solo dejan ver al público las piezas publicadas, y el panel exige inicio de sesión.</p>
+                <ul class="stack"><li>Next.js</li><li>TypeScript</li><li>Supabase</li><li>PostgreSQL</li><li>Vercel</li></ul>
+                <a href="https://github.com/Crisxpy/museo-magallanes-3d" target="_blank" rel="noopener">Ver código en GitHub</a>
+              </div>
+            </details>
+          </div>
+        </article>
+
+        <article class="case" id="caso-hta">
           <span class="case-tag">Modelo predictivo · Proyecto académico</span>
           <h3>Predictor de riesgo de hipertensión</h3>
           <p class="case-text">Estima el riesgo con 8 preguntas simples, sin exámenes, a través de un chatbot. Combina una encuesta nacional y el registro clínico de un CESFAM, con formatos distintos.</p>
@@ -375,10 +493,12 @@
             <div class="metric"><b>77%</b><span>de las alertas fueron correctas</span></div>
           </div>
           <p class="applies"><b>En su empresa:</b> anticipar mora, clientes que se van o pacientes que no llegan.</p>
+          <div class="case-actions"><a class="btn btn-primary btn-sm" href="demo-hta.html" target="_blank" rel="noopener">Probar la demo</a><span class="note" style="font-size:14px;color:var(--muted)">8 preguntas, sin registro</span></div>
           <details>
             <summary>Detalle técnico</summary>
             <div class="details-body">
               <p>Se compararon 3 algoritmos y se eligió el que menos casos dejaba pasar: no detectar a un hipertenso cuesta más que una falsa alarma. Exactitud de 75% en validación externa.</p>
+              <p>La demo usa la versión de bosque aleatorio del modelo y calcula todo en el navegador, sin enviar datos a ningún servidor.</p>
               <p>Limitación: el registro clínico no traía IMC exacto ni actividad física, lo que bajó la sensibilidad de 69,5% a 58,6%.</p>
               <ul class="stack"><li>Python</li><li>scikit-learn</li><li>pandas</li><li>Flask</li><li>Telegram API</li></ul>
               <a href="https://github.com/maracenam/Modelo-Prediccion-IA-Hipertension" target="_blank" rel="noopener">Ver código en GitHub</a>
@@ -386,7 +506,7 @@
           </details>
         </article>
 
-        <article class="case">
+        <article class="case" id="caso-indicadores">
           <span class="case-tag">Pipeline y dashboard · Proyecto personal</span>
           <h3>Indicadores económicos, actualizados solos</h3>
           <p class="case-text">Descarga UF, dólar e IMACEC desde el Banco Central, los valida y los deja listos en un dashboard de Power BI cada mes, sin copiar ni pegar.</p>
@@ -424,11 +544,11 @@
         </details>
         <details>
           <summary>¿Cuánto cuesta?</summary>
-          <div class="details-body"><p>Es un precio fijo que depende de cuántas fuentes de datos revisamos. Lo conoce antes de empezar, sin cobros por hora ni sorpresas.</p></div>
+          <div class="details-body"><p>Cada servicio tiene un precio fijo que depende del alcance, por ejemplo cuántas fuentes de datos o reportes incluye. Lo conoce antes de empezar, sin cobros por hora ni sorpresas.</p></div>
         </details>
         <details>
-          <summary>¿Qué pasa después del diagnóstico?</summary>
-          <div class="details-body"><p>El plan queda en sus manos y lo puede ejecutar su equipo. Si lo prefiere, también puedo implementar dashboards, automatizar cargas de datos o construir un modelo predictivo.</p></div>
+          <summary>¿Tengo que partir por el diagnóstico?</summary>
+          <div class="details-body"><p>No. Si ya sabe lo que necesita, por ejemplo un dashboard, partimos por ahí. El diagnóstico se recomienda cuando no está claro dónde está el problema o cuando los datos no son confiables, porque ningún reporte ni modelo es mejor que los datos que usa.</p></div>
         </details>
       </div>
     </div>
@@ -439,7 +559,7 @@
       <div class="contact-card">
         <div>
           <h2>Conversemos 15 minutos</h2>
-          <p>Cuénteme qué reporte o planilla le está dando problemas y le digo si un diagnóstico le sirve.</p>
+          <p>Cuénteme qué reporte, planilla o proceso le está dando problemas y le digo cuál servicio le sirve, o si no necesita ninguno.</p>
         </div>
         <div class="contact-actions">
           <div class="email-box">
