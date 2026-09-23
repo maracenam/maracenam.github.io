@@ -1,0 +1,493 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matías Aracena · Datos y Control</title>
+<meta name="description" content="Matías Aracena: diagnóstico de datos, dashboards, pipelines y modelos predictivos para empresas en Chile.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #FAFAF8;
+    --surface: #FFFFFF;
+    --ink: #17212B;
+    --muted: #59636B;
+    --rule: #E3E6E4;
+    --accent: #0B6B62;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E4F1EE;
+    --crit: #B3261E;  --crit-soft: #FBE9E7;
+    --warn: #8A5A00;  --warn-soft: #FDF1D8;
+    --ok: #1E6B3A;    --ok-soft: #E3F3E8;
+    --shadow: 0 1px 2px rgba(23,33,43,.05), 0 8px 24px -8px rgba(23,33,43,.12);
+    --sans: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #0F1418;
+      --surface: #161D22;
+      --ink: #E6EBEE;
+      --muted: #9CA7AE;
+      --rule: #273138;
+      --accent: #5CC7B8;
+      --accent-ink: #06201D;
+      --accent-soft: #15302C;
+      --crit: #FF8A80;  --crit-soft: #3A1C1A;
+      --warn: #F2C063;  --warn-soft: #362B14;
+      --ok: #7DD3A0;    --ok-soft: #173024;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -10px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground: #0F1418;
+    --surface: #161D22;
+    --ink: #E6EBEE;
+    --muted: #9CA7AE;
+    --rule: #273138;
+    --accent: #5CC7B8;
+    --accent-ink: #06201D;
+    --accent-soft: #15302C;
+    --crit: #FF8A80;  --crit-soft: #3A1C1A;
+    --warn: #F2C063;  --warn-soft: #362B14;
+    --ok: #7DD3A0;    --ok-soft: #173024;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -10px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font: 400 17px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 1080px; margin: 0 auto; padding-inline: 24px; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  p { margin: 0; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 46px; padding: 0 20px;
+    font: 600 16px/1 var(--sans);
+    border-radius: 8px; border: 1px solid transparent;
+    text-decoration: none; cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, transform .15s ease;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { filter: brightness(1.07); }
+  .btn-secondary { background: transparent; color: var(--ink); border-color: var(--rule); }
+  .btn-secondary:hover { border-color: var(--muted); }
+  .btn-sm { min-height: 38px; padding: 0 14px; font-size: 15px; }
+  .btn svg { width: 16px; height: 16px; }
+
+  /* Top bar */
+  .topbar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    background: color-mix(in srgb, var(--ground) 92%, transparent);
+    backdrop-filter: saturate(1.2) blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar .container { display: flex; align-items: center; gap: 24px; min-height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 600; }
+  .mono-mark {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--ink); color: var(--ground);
+    display: grid; place-items: center;
+    font: 600 13px/1 var(--sans); letter-spacing: .02em;
+  }
+  .nav { display: flex; gap: 24px; margin-left: auto; }
+  .nav a { color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500; }
+  .nav a:hover { color: var(--ink); }
+
+  /* Hero */
+  .hero { padding-block: 72px 64px; }
+  .hero .container { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 56px; align-items: center; }
+  .eyebrow { font-size: 15px; font-weight: 500; color: var(--accent); margin-bottom: 16px; }
+  .hero h1 { font-size: clamp(36px, 5.2vw, 56px); line-height: 1.05; font-weight: 700; letter-spacing: -.025em; margin-bottom: 20px; }
+  .hero-sub { font-size: 19px; color: var(--muted); max-width: 32em; margin-bottom: 32px; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .hero-note { margin-top: 16px; font-size: 14px; color: var(--muted); }
+
+  /* Signature: sample diagnosis report */
+  .report {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .report-head { padding: 18px 20px 14px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .report-head strong { font-size: 15px; }
+  .report-head span { font-size: 13px; color: var(--muted); }
+  .report-rows { list-style: none; margin: 0; padding: 0; }
+  .report-rows li {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 14px; align-items: center;
+    padding: 13px 20px; border-bottom: 1px solid var(--rule); font-size: 15px;
+  }
+  .report-rows .val { font: 500 14px/1 var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; }
+  .chip {
+    font: 600 12px/1 var(--sans); padding: 5px 9px; border-radius: 999px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .chip-crit { color: var(--crit); background: var(--crit-soft); }
+  .chip-warn { color: var(--warn); background: var(--warn-soft); }
+  .chip-ok   { color: var(--ok);   background: var(--ok-soft); }
+  .report-foot { padding: 14px 20px; background: var(--accent-soft); font-size: 14px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .report-foot b { color: var(--accent); }
+  .report-caption { margin-top: 10px; font-size: 13px; color: var(--muted); text-align: center; }
+
+  /* Credentials strip */
+  .creds { border-block: 1px solid var(--rule); background: var(--surface); }
+  .creds ul { list-style: none; margin: 0 auto; padding-block: 22px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .creds li { display: flex; flex-direction: column; gap: 2px; }
+  .creds b { font-size: 16px; font-weight: 600; }
+  .creds span { font-size: 14px; color: var(--muted); }
+
+  /* Sections */
+  section.block { padding-block: 88px 0; }
+  .section-head { max-width: 640px; margin-bottom: 40px; }
+  .section-head h2 { font-size: clamp(28px, 3.6vw, 38px); line-height: 1.15; font-weight: 700; letter-spacing: -.02em; margin-bottom: 12px; }
+  .section-head p { color: var(--muted); font-size: 18px; }
+
+  /* Service */
+  .service { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 48px; align-items: start; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: step; }
+  .steps li { position: relative; padding: 0 0 28px 56px; }
+  .steps li:last-child { padding-bottom: 0; }
+  .steps li::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; left: 0; top: 0;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--accent); color: var(--accent);
+    display: grid; place-items: center; font-weight: 600; font-size: 15px;
+    background: var(--ground);
+  }
+  .steps li:not(:last-child)::after {
+    content: ""; position: absolute; left: 17.5px; top: 40px; bottom: 4px; width: 1.5px; background: var(--rule);
+  }
+  .steps .when { font-size: 13px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
+  .steps h3 { font-size: 19px; font-weight: 600; margin: 2px 0 6px; }
+  .steps p { color: var(--muted); max-width: 44ch; }
+
+  .deliver { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 28px; }
+  .deliver h3 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .deliver ul { list-style: none; margin: 0 0 24px; padding: 0; display: grid; gap: 12px; }
+  .deliver li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; font-size: 16px; }
+  .deliver li svg { width: 20px; height: 20px; margin-top: 3px; color: var(--accent); }
+  .deliver .meta { display: flex; flex-wrap: wrap; gap: 8px 20px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--muted); }
+  .deliver .meta b { color: var(--ink); font-weight: 600; }
+
+  /* Cases */
+  .cases { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  .case { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 28px; display: flex; flex-direction: column; gap: 18px; }
+  .case-tag { align-self: flex-start; font-size: 13px; font-weight: 600; color: var(--muted); background: var(--ground); border: 1px solid var(--rule); padding: 4px 10px; border-radius: 999px; }
+  .case h3 { font-size: 23px; line-height: 1.2; font-weight: 700; letter-spacing: -.01em; }
+  .case-text { color: var(--muted); }
+  .metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .metric { background: var(--ground); border-radius: 10px; padding: 14px 16px; }
+  .metric b { display: block; font-size: 26px; line-height: 1.1; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .metric span { display: block; margin-top: 4px; font-size: 14px; color: var(--muted); line-height: 1.35; }
+  .case .applies { font-size: 15px; }
+  .case .applies b { font-weight: 600; }
+  details { border-top: 1px solid var(--rule); padding-top: 14px; margin-top: auto; }
+  summary { cursor: pointer; font-weight: 600; font-size: 15px; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 20px; font-weight: 400; color: var(--muted); line-height: 1; }
+  details[open] summary::after { content: "−"; }
+  .details-body { padding-top: 12px; display: grid; gap: 12px; font-size: 15px; color: var(--muted); }
+  .stack { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
+  .stack li { font: 400 12.5px/1 var(--mono); color: var(--ink); background: var(--ground); border: 1px solid var(--rule); padding: 6px 8px; border-radius: 6px; }
+
+  /* FAQ */
+  .faq { max-width: 760px; }
+  .faq details { border-top: 1px solid var(--rule); padding-block: 18px; margin: 0; }
+  .faq details:last-child { border-bottom: 1px solid var(--rule); }
+  .faq summary { font-size: 18px; }
+  .faq .details-body { font-size: 16px; max-width: 62ch; }
+
+  /* Contact */
+  .contact { margin-block: 96px 0; }
+  .contact-card {
+    background: var(--ink); color: var(--ground);
+    border-radius: 20px; padding: clamp(28px, 5vw, 56px);
+    display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 32px; align-items: center;
+  }
+  .contact-card h2 { font-size: clamp(28px, 3.6vw, 40px); line-height: 1.1; font-weight: 700; letter-spacing: -.02em; margin-bottom: 12px; }
+  .contact-card p { opacity: .78; font-size: 18px; max-width: 34ch; }
+  .contact-actions { display: grid; gap: 12px; }
+  .email-box {
+    display: flex; align-items: center; gap: 8px;
+    background: color-mix(in srgb, var(--ground) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ground) 22%, transparent);
+    border-radius: 10px; padding: 6px 6px 6px 16px;
+  }
+  .email-box code { font: 400 15px/1.3 var(--mono); flex: 1; min-width: 0; overflow-wrap: anywhere; user-select: all; }
+  .copy-btn { background: var(--ground); color: var(--ink); min-height: 40px; }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 15px; }
+  .contact-links a { color: var(--ground); opacity: .85; }
+  .status { font-size: 14px; min-height: 1.4em; opacity: .85; }
+
+  footer { padding-block: 40px 48px; font-size: 14px; color: var(--muted); }
+  footer .container { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero .container, .service, .contact-card { grid-template-columns: 1fr; }
+    .hero { padding-block: 48px 48px; }
+    .cases { grid-template-columns: 1fr; }
+    .nav { display: none; }
+    .topbar .btn { margin-left: auto; }
+  }
+  @media (max-width: 600px) {
+    .container { padding-inline: 16px; }
+    body { font-size: 16px; }
+    .creds ul { grid-template-columns: 1fr; gap: 14px; }
+    section.block { padding-block: 64px 0; }
+    .case, .deliver { padding: 22px; }
+    .report-rows li { grid-template-columns: minmax(0, 1fr) auto; }
+    .report-rows .val { grid-column: 1; grid-row: 2; text-align: left; color: var(--muted); }
+    .report-rows .chip { grid-row: 1 / span 2; grid-column: 2; }
+    .hero-actions .btn { flex: 1 1 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; }
+  }
+</style>
+</head><body>
+
+<header class="topbar">
+  <div class="container">
+    <a class="brand" href="#inicio" aria-label="Matías Aracena, inicio">
+      <span class="mono-mark" aria-hidden="true">MA</span>
+      <span>Matías Aracena</span>
+    </a>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#servicio">Servicio</a>
+      <a href="#casos">Casos</a>
+      <a href="#preguntas">Preguntas</a>
+    </nav>
+    <a class="btn btn-primary btn-sm" href="#contacto">Conversemos</a>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="hero">
+    <div class="container">
+      <div>
+        <p class="eyebrow">Auditoría TI + datos, para empresas en Chile</p>
+        <h1>Decida con números en los que puede confiar.</h1>
+        <p class="hero-sub">Reviso cómo su empresa maneja sus datos, encuentro dónde fallan y le entrego un plan claro para corregirlos. Con la mirada de un auditor TI y las herramientas de un ingeniero de datos.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#contacto">Agendar 15 minutos</a>
+          <a class="btn btn-secondary" href="#servicio">Ver cómo funciona</a>
+        </div>
+        <p class="hero-note">Primera conversación sin costo ni compromiso.</p>
+      </div>
+
+      <figure style="margin:0">
+        <div class="report" role="img" aria-label="Ejemplo de hallazgos de un diagnóstico de datos: clientes duplicados 12% riesgo alto; 3 cuentas de ex empleados con acceso, riesgo alto; diferencia de 2,4% entre ventas y facturación, riesgo medio; cierre de mes de 4 días, riesgo medio; respaldos diarios, sin hallazgo.">
+          <div class="report-head">
+            <strong>Diagnóstico de datos</strong>
+            <span>Distribuidora · 60 personas</span>
+          </div>
+          <ul class="report-rows">
+            <li><span>Clientes duplicados en la base</span><span class="val">12%</span><span class="chip chip-crit">Alto</span></li>
+            <li><span>Ex empleados con acceso a cobranza</span><span class="val">3 cuentas</span><span class="chip chip-crit">Alto</span></li>
+            <li><span>Ventas del ERP vs. facturación</span><span class="val">2,4% dif.</span><span class="chip chip-warn">Medio</span></li>
+            <li><span>Tiempo del cierre mensual</span><span class="val">4 días</span><span class="chip chip-warn">Medio</span></li>
+            <li><span>Respaldo de la base de clientes</span><span class="val">diario</span><span class="chip chip-ok">Correcto</span></li>
+          </ul>
+          <div class="report-foot"><span>Plan de acción</span><b>5 medidas priorizadas</b></div>
+        </div>
+        <figcaption class="report-caption">Ejemplo ilustrativo del tipo de hallazgos que entrega el diagnóstico.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <div class="creds">
+    <ul class="container">
+      <li><b>Auditor TI en una firma Big Four</b><span>Controles, accesos y cumplimiento</span></li>
+      <li><b>Python, SQL, BigQuery y Power BI</b><span>Del Excel desordenado al dashboard automático</span></li>
+      <li><b>Modelos validados con datos reales</b><span>13.700 pacientes en el caso de salud</span></li>
+    </ul>
+  </div>
+
+  <section class="block" id="servicio">
+    <div class="container">
+      <div class="section-head">
+        <h2>Diagnóstico de datos en 3 semanas</h2>
+        <p>Para empresas con información crítica repartida entre planillas y sistemas que no conversan entre sí.</p>
+      </div>
+
+      <div class="service">
+        <ol class="steps">
+          <li>
+            <span class="when">Semana 1</span>
+            <h3>Conversamos y levantamos información</h3>
+            <p>Reunión de inicio y 2 o 3 entrevistas cortas con su equipo. Usted me comparte extractos o un acceso de solo lectura.</p>
+          </li>
+          <li>
+            <span class="when">Semana 2</span>
+            <h3>Reviso y limpio</h3>
+            <p>Analizo calidad, consistencia y accesos de hasta 3 fuentes, y limpio una de ellas, por ejemplo la base de clientes.</p>
+          </li>
+          <li>
+            <span class="when">Semana 3</span>
+            <h3>Le presento resultados y un plan</h3>
+            <p>Reunión de una hora con los hallazgos ordenados por impacto y qué conviene hacer primero.</p>
+          </li>
+        </ol>
+
+        <div class="deliver">
+          <h3>Lo que recibe</h3>
+          <ul>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Informe ejecutivo en lenguaje de negocio</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Riesgos ordenados por impacto, con evidencia</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Plan de acción priorizado y con responsables</span></li>
+            <li><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Una fuente de datos ya limpia</span></li>
+          </ul>
+          <div class="meta"><span><b>3 semanas</b></span><span><b>~4 horas</b> de su equipo</span><span><b>Precio fijo</b> acordado antes</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="casos">
+    <div class="container">
+      <div class="section-head">
+        <h2>Casos</h2>
+        <p>Dos proyectos propios que muestran el método: ordenar los datos, validarlos y ponerlos a trabajar.</p>
+      </div>
+
+      <div class="cases">
+        <article class="case">
+          <span class="case-tag">Modelo predictivo · Proyecto académico</span>
+          <h3>Predictor de riesgo de hipertensión</h3>
+          <p class="case-text">Estima el riesgo con 8 preguntas simples, sin exámenes, a través de un chatbot. Combina una encuesta nacional y el registro clínico de un CESFAM, con formatos distintos.</p>
+          <div class="metrics">
+            <div class="metric"><b>13.700</b><span>pacientes reales para validar</span></div>
+            <div class="metric"><b>77%</b><span>de las alertas fueron correctas</span></div>
+          </div>
+          <p class="applies"><b>En su empresa:</b> anticipar mora, clientes que se van o pacientes que no llegan.</p>
+          <details>
+            <summary>Detalle técnico</summary>
+            <div class="details-body">
+              <p>Se compararon 3 algoritmos y se eligió el que menos casos dejaba pasar: no detectar a un hipertenso cuesta más que una falsa alarma. Exactitud de 75% en validación externa.</p>
+              <p>Limitación: el registro clínico no traía IMC exacto ni actividad física, lo que bajó la sensibilidad de 69,5% a 58,6%.</p>
+              <ul class="stack"><li>Python</li><li>scikit-learn</li><li>pandas</li><li>Flask</li><li>Telegram API</li></ul>
+              <a href="https://github.com/maracenam/Modelo-Prediccion-IA-Hipertension" target="_blank" rel="noopener">Ver código en GitHub</a>
+            </div>
+          </details>
+        </article>
+
+        <article class="case">
+          <span class="case-tag">Pipeline y dashboard · Proyecto personal</span>
+          <h3>Indicadores económicos, actualizados solos</h3>
+          <p class="case-text">Descarga UF, dólar e IMACEC desde el Banco Central, los valida y los deja listos en un dashboard de Power BI cada mes, sin copiar ni pegar.</p>
+          <div class="metrics">
+            <div class="metric"><b>0 horas</b><span>de trabajo manual al mes</span></div>
+            <div class="metric"><b>~$0</b><span>de costo en la nube</span></div>
+          </div>
+          <p class="applies"><b>En su empresa:</b> reportes de ventas, inventario o cobranza que hoy se arman a mano.</p>
+          <details>
+            <summary>Detalle técnico</summary>
+            <div class="details-body">
+              <p>Carga incremental en BigQuery, respaldo de los datos originales en Cloud Storage y vistas SQL que separan la lógica del dashboard. Se ejecuta el día 5 de cada mes con Cloud Scheduler.</p>
+              <ul class="stack"><li>Python</li><li>BigQuery</li><li>Cloud Functions</li><li>SQL</li><li>Power BI</li></ul>
+              <a href="https://github.com/maracenam/indicadores-chile" target="_blank" rel="noopener">Ver código en GitHub</a>
+            </div>
+          </details>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="preguntas">
+    <div class="container">
+      <div class="section-head">
+        <h2>Preguntas frecuentes</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary>¿Tengo que darle acceso a mis sistemas?</summary>
+          <div class="details-body"><p>No necesariamente. Puede enviarme extractos en Excel o CSV. Si prefiere dar acceso, es solo de lectura, y antes de empezar firmamos un acuerdo de confidencialidad.</p></div>
+        </details>
+        <details>
+          <summary>¿Cuánto tiempo le quita a mi equipo?</summary>
+          <div class="details-body"><p>Unas 4 horas en total, casi todo en entrevistas de 45 minutos durante la primera semana. El resto del trabajo lo hago yo.</p></div>
+        </details>
+        <details>
+          <summary>¿Cuánto cuesta?</summary>
+          <div class="details-body"><p>Es un precio fijo que depende de cuántas fuentes de datos revisamos. Lo conoce antes de empezar, sin cobros por hora ni sorpresas.</p></div>
+        </details>
+        <details>
+          <summary>¿Qué pasa después del diagnóstico?</summary>
+          <div class="details-body"><p>El plan queda en sus manos y lo puede ejecutar su equipo. Si lo prefiere, también puedo implementar dashboards, automatizar cargas de datos o construir un modelo predictivo.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contacto">
+    <div class="container">
+      <div class="contact-card">
+        <div>
+          <h2>Conversemos 15 minutos</h2>
+          <p>Cuénteme qué reporte o planilla le está dando problemas y le digo si un diagnóstico le sirve.</p>
+        </div>
+        <div class="contact-actions">
+          <div class="email-box">
+            <code id="correo">mbaracenamartinez@gmail.com</code>
+            <button type="button" class="btn btn-sm copy-btn" id="copiar">Copiar</button>
+          </div>
+          <p class="status" id="estado" aria-live="polite"></p>
+          <div class="contact-links">
+            <a href="https://github.com/maracenam" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <span>Matías Aracena · Santiago, Chile</span>
+    <span>2026</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copiar');
+    var code = document.getElementById('correo');
+    var estado = document.getElementById('estado');
+    function seleccionar() {
+      var r = document.createRange();
+      r.selectNodeContents(code);
+      var s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+      estado.textContent = 'Correo seleccionado. Cópielo con Ctrl+C o Cmd+C.';
+    }
+    btn.addEventListener('click', function () {
+      var text = code.textContent.trim();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = 'Copiado';
+          estado.textContent = 'Correo copiado al portapapeles.';
+          setTimeout(function () { btn.textContent = 'Copiar'; }, 2200);
+        }, seleccionar);
+      } else {
+        seleccionar();
+      }
+    });
+  })();
+</script>
+</body></html>
